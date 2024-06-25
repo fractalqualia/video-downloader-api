@@ -7,7 +7,6 @@ const axios = require('axios');
 const os = require('os');
 
 const app = express();
-const port = process.env.PORT || 3000;
 
 // Function to fetch m3u8 URLs from a given webpage
 async function getM3U8Urls(pageUrl) {
@@ -144,6 +143,6 @@ app.get('/api/downloadVideo', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+module.exports.handler = (event, context, callback) => {
+  return app(event, context, callback);
+};
