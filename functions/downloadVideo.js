@@ -1,5 +1,5 @@
 const express = require('express');
-const chromium = require('chrome-aws-lambda');
+const puppeteer = require('puppeteer');
 const ffmpeg = require('fluent-ffmpeg');
 const path = require('path');
 const fs = require('fs');
@@ -7,17 +7,15 @@ const axios = require('axios');
 const os = require('os');
 
 const app = express();
+const port = process.env.PORT || 3000;
 
 // Function to fetch m3u8 URLs from a given webpage
 async function getM3U8Urls(pageUrl) {
   let browser;
   try {
     console.log(`Launching Puppeteer to fetch m3u8 URLs for: ${pageUrl}`);
-    browser = await chromium.puppeteer.launch({
-      executablePath: await chromium.executablePath,
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      headless: chromium.headless,
+    browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     const page = await browser.newPage();
     const m3u8Urls = [];
@@ -143,6 +141,6 @@ app.get('/api/downloadVideo', async (req, res) => {
   }
 });
 
-module.exports.handler = (event, context, callback) => {
-  return app(event, context, callback);
-};
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});
